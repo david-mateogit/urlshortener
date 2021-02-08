@@ -103,9 +103,7 @@
     const data = {
       link: linkInput.value,
     };
-    postData(data).then((links) => {
-      console.log(links);
-    });
+    postData(data);
   });
 
   const postData = async (data) => {
@@ -120,9 +118,7 @@
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        const newData = await fetch("/create");
-        const json = await newData.json();
-        console.log(json);
+        console.log(response);
         h2.innerHTML = "www.zurl.tk/" + data.link;
         href.href = "www.zurl.tk/" + data.link;
       }
