@@ -117,13 +117,15 @@
         },
         body: JSON.stringify(data),
       });
+      const decoder = new TextDecoder("utf-8");
       if (response.ok) {
         const newData = await response.body
-          .json()
-          .then((real_data) => console.log(real_data));
-
+          .getReader()
+          .read()
+          .then(({ value, done }) => {
+            console.log(decoder.decode(value));
+          });
         console.log(newData);
-
         h2.innerHTML = "www.zurl.tk/" + data.link;
         href.href = "www.zurl.tk/" + data.link;
       }
