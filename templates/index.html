@@ -118,7 +118,12 @@
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        console.log(response);
+        const newData = await response.body
+          .json()
+          .then((real_data) => console.log(real_data));
+
+        console.log(newData);
+
         h2.innerHTML = "www.zurl.tk/" + data.link;
         href.href = "www.zurl.tk/" + data.link;
       }
