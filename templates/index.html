@@ -103,12 +103,14 @@
     const data = {
       link: linkInput.value,
     };
-    postData(data);
+    postData(data).then((links) => {
+      console.log(links);
+    });
   });
 
   const postData = async (data) => {
     try {
-      let response = await fetch("/create", {
+      const response = await fetch("/create", {
         method: "POST",
         headers: {
           "X-CSRFToken": tokenInput.value,
@@ -118,9 +120,10 @@
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        console.log(response);
         h2.innerHTML = "www.zurl.tk/" + data.link;
         href.href = "www.zurl.tk/" + data.link;
+        const json = await response.json();
+        return json;
       }
     } catch (error) {
       return console.error(error);
