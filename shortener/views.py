@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 import uuid
+import json
 from .models import Url
 from django.http import HttpResponse
 
@@ -12,9 +13,10 @@ def index(request):
 
 def create(request):
     if request.method == 'POST':
-        url = request.POST['link']
+        json_data = json.loads(request.body)
+        link = json_data['link']
         uid = str(uuid.uuid4())[:5]
-        new_url = Url(link=url, uuid=uid)
+        new_url = Url(link=link, uuid=uid)
         new_url.save()
         return HttpResponse(uid)
 

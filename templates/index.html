@@ -1,9 +1,4 @@
 <head>
-  <script
-    src="https://code.jquery.com/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-    crossorigin="anonymous"
-  ></script>
   <style>
     *,
     *::before,
@@ -80,28 +75,71 @@
   <h1>URL Shortener</h1>
   <form id="post-form">
     {% csrf_token %}
-    <input type="text" name="link" id="link" placeholder="Enter URL here" />
+    <input
+      type="text"
+      name="link"
+      id="link"
+      required
+      placeholder="Enter URL here"
+    />
     <div class="buttons">
       <button type="submit" id="shorten">Shorten</button>
     </div>
   </form>
-  <section id="section"><h2></h2></section>
+  <section id="section">
+    <a href="#" target="_blank" id="href"><h2 class="linkUrl"></h2></a>
+  </section>
 </main>
 
 <script type="text/javascript">
-  $(document).on("submit", "#post-form", function (e) {
-    e.preventDefault();
+  const postForm = document.getElementById("post-form");
+  const linkInput = document.getElementById("link");
+  const tokenInput = document.querySelector("input[name=csrfmiddlewaretoken]");
+  const h2 = document.querySelector(".linkUrl");
+  const href = document.getElementById("href");
 
-    $.ajax({
-      type: "POST",
-      url: "/create",
-      data: {
-        link: $("#link").val(),
-        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
-      },
-      success: function (data) {
-        $("h2").html("www.zurl.tk/" + data);
-      },
-    });
+  postForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const data = {
+      link: linkInput.value,
+    };
+    postData(data);
   });
+
+  const postData = async (data) => {
+    try {
+      let response = await fetch("/create", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": tokenInput.value,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        h2.innerHTML("www.zurl.tk/" + data);
+        href.href = "www.zurl.tk/" + data;
+      }
+    } catch (error) {
+      return console.error(error);
+    }
+  };
+
+  // $(document).on("submit", "#post-form", function (e) {
+  //   e.preventDefault();
+
+  //   $.ajax({
+  //     type: "POST",
+  //     url: "/create",
+  //     data: {
+  //       link: $("#link").val(),
+  //       csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+  //     },
+  //     success: function (data) {
+  //       $("h2").html("www.zurl.tk/" + data);
+  //       $("a").attr("href", "www.zurl.tk/" + data);
+  //     },
+  //   });
+  // });
 </script>

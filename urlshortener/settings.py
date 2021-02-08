@@ -78,6 +78,9 @@ WSGI_APPLICATION = 'urlshortener.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config()
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    # }
 }
 
 
