@@ -118,6 +118,7 @@
         body: JSON.stringify(data),
       });
       if (response.ok) {
+        console.log(response);
         h2.innerHTML = "www.zurl.tk/" + data.link;
         href.href = "www.zurl.tk/" + data.link;
       }
