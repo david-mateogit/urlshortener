@@ -408,12 +408,13 @@
     }
   };
 
-  shareButton.addEventListener("click", (event) => {
+  shareButton.addEventListener("click", async (event) => {
     if (navigator.share) {
-      navigator
+      await navigator
         .share({
           title: "URL Shortener",
-          url: shareUrl.value,
+          url: "http://www.zurl.tk",
+          text: shareUrl.value,
         })
         .then(() => {
           console.log("Thanks for sharing!");
