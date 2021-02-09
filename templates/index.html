@@ -126,7 +126,7 @@
           .then(({ value, done }) => {
             const code = decoder.decode(value);
             h2.innerHTML = "www.zurl.tk/" + code;
-            ahref.href = "www.zurl.tk/" + code;
+            ahref.href = code;
           });
       }
     } catch (error) {
