@@ -428,10 +428,9 @@
 
   shareButton.addEventListener("click", (event) => {
     if (navigator.share) {
-      navigator
-        .share({
+      navigator.share({
           title: "URL Shortener",
-          url: h2.innerHTML,
+          url: shareUrl.value,
         })
         .then(() => {
           console.log("Thanks for sharing!");
