@@ -1,6 +1,7 @@
 {% load static %}
 
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
   <style>
     *,
     *::before,
@@ -17,17 +18,71 @@
       font-size: 1.2rem;
       line-height: 1.5;
       color: #111;
+      background-color: #0b1736;
     }
 
     main {
-      max-width: 720px;
+      margin: 2rem;
+      background-color: #1b3987;
+      min-height: 420px;
+    }
+
+    #post-form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #link {
+      appearance: none;
+      background-color: #fff;
+      border: 1px solid #d3d4d7;
+      border-radius: 8px;
+      box-shadow: rgba(10, 10, 10, 0.1) 0 1px 2px inset;
+      box-sizing: border-box;
+      color: #36383b;
+      cursor: text;
+      display: inline-block;
+      float: left;
+      font-family: "ProximaNova Regular", "Helvetica Neue", Helvetica, Arial,
+        sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      height: 50px;
+      line-height: 1.5;
+      margin: 0 0 10px;
+      overflow: visible;
+      padding: 0 20px;
+      transition: box-shadow 0.5s, border-color 0.25s ease-in-out,
+        -webkit-box-shadow 0.5s;
       width: 100%;
-      border: 2.5px solid #04220e;
-      border-radius: 2.5px;
-      box-shadow: 0 10px 20px rgba(17, 17, 17, 0.125),
-        0 5px 5px rgba(17, 17, 17, 0.25);
-      background-image: linear-gradient(to top, #848a55 0%, #0b4203 100%);
-      margin: 4rem auto;
+    }
+
+    #shorten {
+      appearance: none;
+      background-color: #1b3987;
+      border: 1px solid #fefefe;
+      border-radius: 0;
+      box-sizing: border-box;
+      color: #fefefe;
+      cursor: pointer;
+      display: inline-block;
+      float: right;
+      font-family: "ProximaNova Regular", "Helvetica Neue", Helvetica, Arial,
+        sans-serif;
+      font-size: 0.9rem;
+      line-height: 1;
+      margin: 0;
+      min-width: 25%;
+      outline: none;
+      overflow: visible;
+      padding: 15px;
+      position: relative;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.25s ease-out, color 0.25s ease-out;
+      vertical-align: bottom;
+      white-space: pre;
+      width: 100%;
     }
 
     h1 {
@@ -35,22 +90,13 @@
       color: white;
     }
 
-    #h2 {
+    h2 {
       margin: 1rem;
+      text-decoration: underline;
     }
 
-    input,
-    button {
-      font-family: inherit;
-      line-height: inherit;
-      color: inherit;
-      border: 0;
-      padding: 1rem;
-    }
-
-    input {
-      box-sizing: border-box;
-      width: 100%;
+    #copy-link-button {
+      margin: 1rem;
     }
 
     .buttons {
@@ -74,7 +120,9 @@
     }
 
     section {
-      min-height: 120px;
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
       text-align: center;
       background-color: white;
     }
@@ -128,7 +176,7 @@
 
     .share-dialog {
       position: absolute;
-      top: 10%;
+      top: 30%;
       left: 50%;
       transform: translate(-50%, -50%);
     }
@@ -190,12 +238,17 @@
       white-space: nowrap;
     }
   </style>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
   <link
     rel="shortcut icon"
     type="image/png"
     href="{% static 'favicon.ico' %}"
   />
 </head>
+
 <main>
   <h1>URL Shortener</h1>
   <form id="post-form">
@@ -249,11 +302,16 @@
           <span>Email</span>
         </a>
       </div>
-      <div class="link">
-        <input type="text" class="pen-url" disabled />
-        <button class="copy-link">Copy Link</button>
-      </div>
     </div>
+
+    <button
+      id="copy-link-button"
+      data-clipboard-target="#h2"
+      type="button"
+      class="hidden"
+    >
+      Copy Link
+    </button>
 
     <button
       class="share-button hidden"
@@ -370,12 +428,27 @@
   const linkInput = document.getElementById("link");
   const tokenInput = document.querySelector("input[name=csrfmiddlewaretoken]");
   const h2 = document.getElementById("h2");
+  const copyLinkButton = document.getElementById("copy-link-button");
 
   const shareButton = document.querySelector(".share-button");
   const shareDialog = document.querySelector(".share-dialog");
   const closeButton = document.querySelector(".close-button");
-  const copyButton = document.querySelector(".copy-link");
-  const shareUrl = document.querySelector(".pen-url");
+
+  const clipboard = new ClipboardJS("#copy-link-button");
+
+  clipboard.on("success", function (e) {
+    // console.info("Action:", e.action);
+    // console.info("Text:", e.text);
+    // console.info("Trigger:", e.trigger);
+    e.trigger.innerHTML = "Copied";
+    e.clearSelection();
+  });
+
+  clipboard.on("error", function (e) {
+    console.error("Action:", e.action);
+    console.error("Trigger:", e.trigger);
+    e.trigger.innerHTML = "Error Copying - Try again";
+  });
 
   postForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -405,11 +478,12 @@
           .then(({ value, done }) => {
             const code = decoder.decode(value);
             h2.innerHTML = "www.zurl.tk/" + code;
-            shareUrl.value = "www.zurl.tk/" + code;
           });
+        copyLinkButton.classList.remove("hidden");
         shareButton.classList.remove("hidden");
       }
     } catch (error) {
+      copyLinkButton.classList.add("hidden");
       shareButton.classList.add("hidden");
       return console.error(error);
     }
@@ -417,6 +491,7 @@
 
   shareButton.addEventListener("click", async (event) => {
     if (navigator.share) {
+      alert("Nav Can share");
       await navigator
         .share({
           title: "URL Shortener",
@@ -428,6 +503,7 @@
         })
         .catch(console.error);
     } else {
+      alert("Nav Can NOT share");
       shareDialog.classList.add("is-open");
     }
   });
@@ -435,37 +511,4 @@
   closeButton.addEventListener("click", (event) => {
     shareDialog.classList.remove("is-open");
   });
-
-  copyButton.addEventListener("click", (event) => {
-    if (!navigator.clipboard) {
-      copyFn(shareUrl);
-      return;
-    }
-
-    navigator.clipboard.writeText(shareUrl.value).then(
-      function () {
-        console.log("Async: Copying to clipboard was successful!");
-      },
-      function (err) {
-        console.error("Async: Could not copy text: ", err);
-      }
-    );
-  });
-
-  const copyFn = async (input) => {
-    input.disabled = false;
-    await input.select();
-
-    try {
-      const successful = await document.execCommand("copy");
-      const msg = successful ? "successful" : "unsuccessful";
-      console.log("Copy command was " + msg);
-      shareUrl.disabled = true;
-    } catch (err) {
-      console.log("Oops, unable to copy");
-      shareUrl.disabled = true;
-    }
-
-    window.getSelection().removeAllRanges();
-  };
 </script>
