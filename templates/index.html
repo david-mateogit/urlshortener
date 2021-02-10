@@ -165,9 +165,10 @@
     }
 
     .share-button,
-    .copy-link {
+    #copy-link-button {
       padding-left: 30px;
       padding-right: 30px;
+      width: 150px;
     }
 
     .share-button {
@@ -237,6 +238,24 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
+    @media (min-width: 600px) {
+      main {
+        max-width: 600px;
+        margin: 4rem auto;
+      }
+
+      #copy-link-button,
+      .share-button {
+        max-width: 200px;
+        height: 20px;
+      }
+
+      .main-btns {
+        display: flex;
+        justify-content: space-evenly;
+      }
+    }
   </style>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -304,26 +323,30 @@
       </div>
     </div>
 
-    <button
-      id="copy-link-button"
-      data-clipboard-target="#h2"
-      type="button"
-      class="hidden"
-    >
-      Copy Link
-    </button>
+    <div class="main-btns">
+      <button
+        id="copy-link-button"
+        data-clipboard-target="#h2"
+        type="button"
+        class="hidden"
+      >
+        <svg>
+          <use href="#share-icon"></use>
+        </svg>
+        <span>Copy Link</span>
+      </button>
 
-    <button
-      class="share-button hidden"
-      type="button"
-      title="Share this article"
-    >
-      <svg>
-        <use href="#share-icon"></use>
-      </svg>
-      <span>Share</span>
-    </button>
-
+      <button
+        class="share-button hidden"
+        type="button"
+        title="Share this article"
+      >
+        <svg>
+          <use href="#share-icon"></use>
+        </svg>
+        <span>Share</span>
+      </button>
+    </div>
     <svg class="hidden">
       <defs>
         <symbol
@@ -491,19 +514,17 @@
 
   shareButton.addEventListener("click", async (event) => {
     if (navigator.share) {
-      alert("Nav Can share");
       await navigator
         .share({
           title: "URL Shortener",
           url: "http://www.zurl.tk",
-          text: shareUrl.value,
+          text: h2.innerHTML,
         })
         .then(() => {
           console.log("Thanks for sharing!");
         })
         .catch(console.error);
     } else {
-      alert("Nav Can NOT share");
       shareDialog.classList.add("is-open");
     }
   });
