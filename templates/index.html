@@ -507,15 +507,19 @@
 
   shareButton.addEventListener("click", async (event) => {
     if (navigator.share) {
-      await navigator
-        .share({
-          title: "URL Shortener",
-          text: h2.innerHTML,
-        })
-        .then(() => {
-          console.log("Thanks for sharing!");
-        })
-        .catch(console.error);
+      try {
+        await navigator
+          .share({
+            title: "URL Shortener",
+            text: h2.innerHTML,
+          })
+          .then(() => {
+            console.log("Thanks for sharing!");
+          });
+      } catch (err) {
+        console.error(err);
+        window.location.reload(true);
+      }
     } else {
       shareDialog.classList.add("is-open");
     }
