@@ -41,8 +41,6 @@
       box-sizing: border-box;
       color: #36383b;
       cursor: text;
-      display: inline-block;
-      float: left;
       font-family: "ProximaNova Regular", "Helvetica Neue", Helvetica, Arial,
         sans-serif;
       font-size: 20px;
@@ -286,28 +284,28 @@
         </button>
       </header>
       <div class="targets">
-        <a class="button">
+        <a class="button facebook" href="#" target="_blank">
           <svg>
             <use href="#facebook"></use>
           </svg>
           <span>Facebook</span>
         </a>
 
-        <a class="button">
+        <a class="button twitter" href="#" target="_blank">
           <svg>
             <use href="#twitter"></use>
           </svg>
           <span>Twitter</span>
         </a>
 
-        <a class="button">
+        <a class="button linkedin" href="#" target="_blank">
           <svg>
             <use href="#linkedin"></use>
           </svg>
           <span>LinkedIn</span>
         </a>
 
-        <a class="button">
+        <a class="button email" href="#" target="_blank">
           <svg>
             <use href="#email"></use>
           </svg>
@@ -447,6 +445,10 @@
   const copyLinkButton = document.getElementById("copy-link-button");
 
   const shareButton = document.querySelector(".share-button");
+  const fbBtn = document.querySelector(".facebook");
+  const twitterBtn = document.querySelector(".twitter");
+  const linkedinBtn = document.querySelector(".linkedin");
+  const emailBtn = document.querySelector(".email");
   const shareDialog = document.querySelector(".share-dialog");
   const closeButton = document.querySelector(".close-button");
 
@@ -494,6 +496,11 @@
           .then(({ value, done }) => {
             const code = decoder.decode(value);
             h2.innerHTML = "www.zurl.tk/" + code;
+
+            fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=www.zurl.tk/${code}`;
+            twitterBtn.href = `https://twitter.com/share?url=www.zurl.tk/${code}`;
+            linkedinBtn.href = `https://www.linkedin.com/shareArticle?mini=true&url=www.zurl.tk/${code}&title=Website`;
+            emailBtn.href = `mailto:?subject=Shortened Url&amp;body=Check out this site www.zurl.tk/${code}.`;
           });
         copyLinkButton.classList.remove("hidden");
         shareButton.classList.remove("hidden");
@@ -518,7 +525,6 @@
           });
       } catch (err) {
         console.error(err);
-        window.location.reload(true);
       }
     } else {
       shareDialog.classList.add("is-open");
